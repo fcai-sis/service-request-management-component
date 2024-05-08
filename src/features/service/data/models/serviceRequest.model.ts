@@ -32,6 +32,11 @@ const ServiceRequestSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  imgAttachment: {
+    type: String,
+    required: true,
+    default: null,
+  },
 });
 
 type ServiceRequestType = InferSchemaType<typeof ServiceRequestSchema>;
