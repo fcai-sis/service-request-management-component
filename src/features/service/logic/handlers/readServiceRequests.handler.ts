@@ -11,23 +11,22 @@ const handler = async (req: HandlerRequest, res: Response) => {
   const page = req.context.page;
   const pageSize = req.context.pageSize;
 
-  const serviceRequests = await ServiceRequestModel.find()
+  const serviceRequests = await ServiceRequestModel.find(
+    {},
+    {
+      __v: 0,
+      _id: 0,
+    }
+  )
     .populate({
       path: "studentId",
-      select: "fullName -_id",
+      select: "fullName studentId -_id",
     })
     .skip((page - 1) * pageSize)
     .limit(pageSize);
 
   const response = {
-    serviceRequests: serviceRequests.map((serviceRequest) => ({
-      serviceName: serviceRequest.serviceName,
-      status: serviceRequest.status,
-      student: serviceRequest.studentId,
-      message: serviceRequest.message,
-      createdAt: serviceRequest.createdAt,
-      claimAt: serviceRequest.claimAt,
-    })),
+    serviceRequests: serviceRequests,
     page: page,
     pageSize: pageSize,
   };
