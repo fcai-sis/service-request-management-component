@@ -1,5 +1,5 @@
 import { Mongoose, connect } from "mongoose";
-
+import { v2 as cloudinary } from "cloudinary";
 import env from "./env";
 import logger from "./core/logger";
 
@@ -17,5 +17,13 @@ const connectMongo = async (): Promise<Mongoose> => {
     process.exit(1);
   }
 };
+
+cloudinary.config({
+  cloud_name: env.CLOUDINARY_CLOUD_NAME!,
+  api_key: env.CLOUDINARY_API_KEY!,
+  api_secret: env.CLOUDINARY_API_SECRET!,
+});
+
+export { cloudinary };
 
 export default connectMongo;
