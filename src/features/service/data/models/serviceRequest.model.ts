@@ -1,7 +1,12 @@
 import { studentModelName } from "@fcai-sis/shared-models";
 import mongoose, { InferSchemaType, Schema } from "mongoose";
 
-const ServiceStatus = ["pending", "completed", "cancelled"] as const;
+const ServiceStatus = [
+  "pending",
+  "in progress",
+  "completed",
+  "rejected",
+] as const;
 export type ServiceStatusType = (typeof ServiceStatus)[number];
 
 const ServiceRequestSchema = new mongoose.Schema({
@@ -39,7 +44,7 @@ const ServiceRequestSchema = new mongoose.Schema({
   },
 });
 
-type ServiceRequestType = InferSchemaType<typeof ServiceRequestSchema>;
+export type ServiceRequestType = InferSchemaType<typeof ServiceRequestSchema>;
 
 const serviceRequestModelName = "ServiceRequest";
 
