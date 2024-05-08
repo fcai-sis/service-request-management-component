@@ -1,6 +1,5 @@
 import * as validator from "express-validator";
 import { NextFunction, Request, Response } from "express";
-import { ServiceStatusType } from "../../data/models/serviceRequest.model";
 import logger from "../../../../core/logger";
 import { StudentModel } from "@fcai-sis/shared-models";
 
@@ -39,7 +38,7 @@ const validateCreateServiceRequestMiddleware = [
 
   (req: Request, res: Response, next: NextFunction) => {
     logger.debug(
-      `Validating create course req body: ${JSON.stringify(req.body)}`
+      `Validating create service request req body: ${JSON.stringify(req.body)}`
     );
 
     // If any of the validations above failed, return an error response
