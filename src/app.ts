@@ -3,13 +3,25 @@ import morgan from "morgan";
 import helmet from "helmet";
 import compression from "compression";
 import express, { NextFunction, Request, Response } from "express";
-
+import multer from "multer";
 import { serviceRequestRouter } from "./router";
 import { isDev } from "./env";
 import logger from "./core/logger";
 
 // Create Express server
 const app = express();
+
+// Set up memory disk for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "/tmp");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+export const upload = multer({ storage: storage });
 
 // Initialize the context object
 app.use((req: Request, _: Response, next: NextFunction) => {
