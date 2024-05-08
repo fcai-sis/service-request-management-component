@@ -16,13 +16,6 @@ const validateCreateServiceRequestMiddleware = [
     .withMessage("Service name must be a string"),
 
   validator
-    .body("status")
-    .exists()
-    .withMessage("Service status is required")
-    .isIn(["pending", "completed", "cancelled"] as ServiceStatusType[])
-    .withMessage("Invalid service status"),
-
-  validator
     .body("studentId")
     .exists()
     .withMessage("Student ID is required")
@@ -43,13 +36,6 @@ const validateCreateServiceRequestMiddleware = [
     .optional()
     .isString()
     .withMessage("Message must be a string"),
-
-  validator
-    .body("imgAttachment")
-    .exists()
-    .withMessage("Image attachment is required")
-    .isString()
-    .withMessage("Image attachment must be a string"),
 
   (req: Request, res: Response, next: NextFunction) => {
     logger.debug(
@@ -75,7 +61,6 @@ const validateCreateServiceRequestMiddleware = [
 
     // Attach the validated data to the request body
     req.body.serviceName = req.body.serviceName.trim();
-    req.body.status = req.body.status.trim();
     req.body.studentId = req.body.studentId.trim();
     req.body.message = req.body.message?.trim();
 
