@@ -7,11 +7,13 @@ import readServiceByIdHandler from "./logic/handlers/getServiceRequestById.handl
 import validateCreateServiceRequestMiddleware from "./logic/middlewares/validateCreateServiceRequest.middleware";
 import { paginationQueryParamsMiddleware } from "@fcai-sis/shared-middlewares";
 import ensureServiceRequestIdInParamsMiddleware from "./logic/middlewares/ensureRequestIdInParams.middleware";
+import { upload } from "../../app";
 
 const serviceRequestRoutes = (router: Router) => {
   router.post(
     "/create",
 
+    upload.single("imgAttachment"),
     validateCreateServiceRequestMiddleware,
     asyncHandler(createServiceHandler)
   );
