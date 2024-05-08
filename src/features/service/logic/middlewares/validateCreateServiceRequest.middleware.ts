@@ -44,6 +44,13 @@ const validateCreateServiceRequestMiddleware = [
     .isString()
     .withMessage("Message must be a string"),
 
+  validator
+    .body("imgAttachment")
+    .exists()
+    .withMessage("Image attachment is required")
+    .isString()
+    .withMessage("Image attachment must be a string"),
+
   (req: Request, res: Response, next: NextFunction) => {
     logger.debug(
       `Validating create course req body: ${JSON.stringify(req.body)}`

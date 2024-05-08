@@ -14,17 +14,19 @@ type HandlerRequest = Request<
     serviceName: string;
     status: ServiceStatusType;
     studentId: string;
+    imgAttachment: string;
     message: string;
   }
 >;
 
 const handler = async (req: HandlerRequest, res: Response) => {
-  const { serviceName, status, studentId, message } = req.body;
+  const { serviceName, status, studentId, imgAttachment, message } = req.body;
 
   const service = new ServiceRequestModel({
     serviceName,
     status,
     studentId,
+    imgAttachment,
     message,
     createdAt: new Date(),
   });
