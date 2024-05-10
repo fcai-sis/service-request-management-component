@@ -15,7 +15,7 @@ const handler = async (req: HandlerRequest, res: Response) => {
     {},
     {
       __v: 0,
-      _id: 0,
+      // _id: 0,
     }
   )
     .populate({
@@ -25,10 +25,14 @@ const handler = async (req: HandlerRequest, res: Response) => {
     .skip((page - 1) * pageSize)
     .limit(pageSize);
 
+  // Count the total number of service requests
+  const totalServiceRequests = await ServiceRequestModel.countDocuments();
+
   const response = {
     serviceRequests: serviceRequests,
     page: page,
     pageSize: pageSize,
+    totalServiceRequests: totalServiceRequests,
   };
 
   return res.status(200).json(response);
