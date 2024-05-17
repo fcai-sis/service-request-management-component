@@ -5,7 +5,11 @@ import createServiceHandler from "./logic/handlers/createServiceRequest.handler"
 import readServiceHandler from "./logic/handlers/readServiceRequests.handler";
 import readServiceByIdHandler from "./logic/handlers/getServiceRequestById.handler";
 import validateCreateServiceRequestMiddleware from "./logic/middlewares/validateCreateServiceRequest.middleware";
-import { paginationQueryParamsMiddleware } from "@fcai-sis/shared-middlewares";
+import {
+  Role,
+  checkRole,
+  paginationQueryParamsMiddleware,
+} from "@fcai-sis/shared-middlewares";
 import ensureServiceRequestIdInParamsMiddleware from "./logic/middlewares/ensureRequestIdInParams.middleware";
 import { upload } from "../../app";
 import acceptServiceRequestHandler from "./logic/handlers/acceptServiceRequest.handler";
@@ -19,7 +23,7 @@ import deleteServiceRequestHandler from "./logic/handlers/deleteServiceRequest.h
 const serviceRequestRoutes = (router: Router) => {
   router.post(
     "/create",
-
+    checkRole([Role.EMPLOYEE, Role.ADMIN]),
     upload.single("imgAttachment"),
     validateCreateServiceRequestMiddleware,
     asyncHandler(createServiceHandler)
@@ -27,20 +31,21 @@ const serviceRequestRoutes = (router: Router) => {
 
   router.get(
     "/read",
-
+    checkRole([Role.EMPLOYEE, Role.ADMIN]),
     paginationQueryParamsMiddleware,
     asyncHandler(readServiceHandler)
   );
 
   router.get(
     "/read/:serviceRequestId",
-
+    checkRole([Role.EMPLOYEE, Role.ADMIN]),
     ensureServiceRequestIdInParamsMiddleware,
     asyncHandler(readServiceByIdHandler)
   );
 
   router.patch(
     "/accept/:serviceRequestId",
+    checkRole([Role.EMPLOYEE, Role.ADMIN]),
     ensureServiceRequestIdInParamsMiddleware,
     validateAcceptServiceRequestMiddleware,
     asyncHandler(acceptServiceRequestHandler)
@@ -48,6 +53,7 @@ const serviceRequestRoutes = (router: Router) => {
 
   router.patch(
     "/reject/:serviceRequestId",
+    checkRole([Role.EMPLOYEE, Role.ADMIN]),
     ensureServiceRequestIdInParamsMiddleware,
     validateRejectServiceRequestMiddleware,
     asyncHandler(rejectServiceRequestHandler)
@@ -55,12 +61,14 @@ const serviceRequestRoutes = (router: Router) => {
 
   router.patch(
     "/update/:serviceRequestId",
+    checkRole([Role.EMPLOYEE, Role.ADMIN]),
     ensureServiceRequestIdInParamsMiddleware,
     validateUpdateServiceRequestMiddleware,
     asyncHandler(updateServiceRequestHandler)
   );
   router.delete(
     "/delete/:serviceRequestId",
+    checkRole([Role.EMPLOYEE, Role.ADMIN]),
     ensureServiceRequestIdInParamsMiddleware,
     asyncHandler(deleteServiceRequestHandler)
   );

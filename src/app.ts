@@ -7,6 +7,7 @@ import multer from "multer";
 import { serviceRequestRouter } from "./router";
 import { isDev } from "./env";
 import logger from "./core/logger";
+import cookieParser from "cookie-parser";
 
 // Create Express server
 const app = express();
@@ -56,6 +57,9 @@ app.use(cors());
 // Parse JSON and url-encoded query
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Parse cookies
+app.use(cookieParser());
 
 // Mount API routes
 app.use("/service", serviceRequestRouter());
