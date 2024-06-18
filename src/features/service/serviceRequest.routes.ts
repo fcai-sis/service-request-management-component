@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Router } from "express";
 
 import { asyncHandler } from "@fcai-sis/shared-utilities";
 import createServiceHandler from "./logic/handlers/createServiceRequest.handler";
@@ -19,25 +19,34 @@ import rejectServiceRequestHandler from "./logic/handlers/rejectServiceRequest.h
 import validateUpdateServiceRequestMiddleware from "./logic/middlewares/validateUpdateServiceRequest.middleware";
 import updateServiceRequestHandler from "./logic/handlers/updateServiceRequest.handler";
 import deleteServiceRequestHandler from "./logic/handlers/deleteServiceRequest.handler";
+import completeServiceRequestHandler from "./logic/handlers/completeServiceRequest.handler";
+import readMyServiceRequestsHandler from "./logic/handlers/readMyServiceRequests.handler";
 
 const serviceRequestRoutes = (router: Router) => {
   router.post(
-    "/create",
-    checkRole([Role.EMPLOYEE, Role.ADMIN]),
-    upload.single("imgAttachment"),
+    "/",
+    upload.single("image"),
+    checkRole([Role.STUDENT]),
     validateCreateServiceRequestMiddleware,
     asyncHandler(createServiceHandler)
   );
 
   router.get(
-    "/read",
+    "/",
     checkRole([Role.EMPLOYEE, Role.ADMIN]),
     paginationQueryParamsMiddleware,
     asyncHandler(readServiceHandler)
   );
 
   router.get(
-    "/read/:serviceRequestId",
+    "/mine",
+    checkRole([Role.STUDENT]),
+    paginationQueryParamsMiddleware,
+    asyncHandler(readMyServiceRequestsHandler)
+  );
+
+  router.get(
+    "/:serviceRequestId",
     checkRole([Role.EMPLOYEE, Role.ADMIN]),
     ensureServiceRequestIdInParamsMiddleware,
     asyncHandler(readServiceByIdHandler)
@@ -57,6 +66,13 @@ const serviceRequestRoutes = (router: Router) => {
     ensureServiceRequestIdInParamsMiddleware,
     validateRejectServiceRequestMiddleware,
     asyncHandler(rejectServiceRequestHandler)
+  );
+
+  router.patch(
+    "/complete/:serviceRequestId",
+    checkRole([Role.EMPLOYEE, Role.ADMIN]),
+    ensureServiceRequestIdInParamsMiddleware,
+    asyncHandler(completeServiceRequestHandler)
   );
 
   router.patch(
