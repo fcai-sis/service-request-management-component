@@ -2,8 +2,9 @@ import { Router } from "express";
 
 import serviceRequestRoutes from "./features/service/serviceRequest.routes";
 
+const router = Router();
+
 export const serviceRequestRouter = (): Router => {
-  const router = Router();
   serviceRequestRoutes(router);
   return router;
 };
