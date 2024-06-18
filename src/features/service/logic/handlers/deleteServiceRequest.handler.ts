@@ -33,7 +33,7 @@ const handler = async (req: HandlerRequest, res: Response) => {
     deletedServiceRequest: {
       serviceName: serviceRequest.serviceName,
       status: serviceRequest.status,
-      student: serviceRequest.studentId,
+      student: serviceRequest.student,
       message: serviceRequest.message,
       createdAt: serviceRequest.createdAt,
       claimAt: serviceRequest.claimAt,

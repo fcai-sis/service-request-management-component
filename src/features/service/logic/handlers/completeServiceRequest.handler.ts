@@ -3,29 +3,27 @@ import ServiceRequestModel, {
   serviceRequestStatuses,
 } from "../../data/models/serviceRequest.model";
 
-/**
- * Handler for rejecting a service request
- */
-
 type HandlerRequest = Request<
   {
     serviceRequestId: string;
   },
   {},
-  {
-    message: string;
-  }
+  {}
 >;
 
-const handler = async (req: HandlerRequest, res: Response) => {
+/**
+ * Completes a service request
+ */
+const completeServiceRequestHandler = async (
+  req: HandlerRequest,
+  res: Response
+) => {
   const { serviceRequestId } = req.params;
-  const { message } = req.body;
 
   const serviceRequest = await ServiceRequestModel.findByIdAndUpdate(
     serviceRequestId,
     {
-      status: serviceRequestStatuses[3],
-      message,
+      status: serviceRequestStatuses[2],
     },
     {
       new: true,
@@ -42,7 +40,7 @@ const handler = async (req: HandlerRequest, res: Response) => {
   await serviceRequest.save();
 
   const response = {
-    message: "Service request has been rejected",
+    message: "Service request has been completed",
     service: {
       serviceName: serviceRequest.serviceName,
       status: serviceRequest.status,
@@ -56,6 +54,4 @@ const handler = async (req: HandlerRequest, res: Response) => {
   return res.status(200).json(response);
 };
 
-const rejectServiceRequestHandler = handler;
-
-export default rejectServiceRequestHandler;
+export default completeServiceRequestHandler;

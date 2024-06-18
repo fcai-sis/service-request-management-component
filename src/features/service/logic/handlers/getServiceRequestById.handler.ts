@@ -12,7 +12,7 @@ const handler = async (req: HandlerRequest, res: Response) => {
 
   const serviceRequest = await ServiceRequestModel.findById(
     serviceRequestId
-  ).populate({ path: "studentId", select: "fullName studentId" });
+  ).populate({ path: "student", select: "fullName studentId -_id" });
 
   if (!serviceRequest) {
     return res.status(404).json({
@@ -25,13 +25,14 @@ const handler = async (req: HandlerRequest, res: Response) => {
   const response = {
     serviceName: serviceRequest.serviceName,
     status: serviceRequest.status,
-    student: serviceRequest.studentId,
+    student: serviceRequest.student,
     message: serviceRequest.message,
     createdAt: serviceRequest.createdAt,
     claimAt: serviceRequest.claimAt,
+    image: serviceRequest.image,
   };
 
-  return res.status(200).json(response);
+  return res.status(200).json({ serviceRequest: response });
 };
 
 const getServiceRequestByIdHandler = handler;

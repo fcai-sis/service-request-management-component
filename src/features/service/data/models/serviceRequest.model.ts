@@ -1,26 +1,37 @@
 import { studentModelName } from "@fcai-sis/shared-models";
-import mongoose, { InferSchemaType, Schema } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
-const ServiceStatus = [
-  "pending",
-  "in progress",
-  "completed",
-  "rejected",
+export const serviceRequestStatuses = [
+  "PENDING",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "REJECTED",
 ] as const;
-export type ServiceStatusType = (typeof ServiceStatus)[number];
 
-const ServiceRequestSchema = new mongoose.Schema({
+export type ServiceRequestStatusType = (typeof serviceRequestStatuses)[number];
+
+interface IServiceRequest extends Document {
+  serviceName: string;
+  status: ServiceRequestStatusType;
+  student: Schema.Types.ObjectId;
+  message: string;
+  createdAt: Date;
+  claimAt: Date;
+  image: string;
+}
+
+const ServiceRequestSchema = new mongoose.Schema<IServiceRequest>({
   serviceName: {
     type: String,
     required: true,
   },
   status: {
     type: String,
-    enum: ServiceStatus,
+    enum: serviceRequestStatuses,
     required: true,
-    default: "pending",
+    default: "PENDING",
   },
-  studentId: {
+  student: {
     type: Schema.Types.ObjectId,
     ref: studentModelName,
     required: true,
@@ -37,18 +48,16 @@ const ServiceRequestSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
-  imgAttachment: {
+  image: {
     type: String,
     required: true,
     default: null,
   },
 });
 
-export type ServiceRequestType = InferSchemaType<typeof ServiceRequestSchema>;
-
 const serviceRequestModelName = "ServiceRequest";
 
-const ServiceRequestModel = mongoose.model<ServiceRequestType>(
+const ServiceRequestModel = mongoose.model<IServiceRequest>(
   serviceRequestModelName,
   ServiceRequestSchema
 );

@@ -1,29 +1,35 @@
 import { Request, Response } from "express";
 import ServiceRequestModel, {
-  ServiceStatusType,
+  serviceRequestStatuses,
 } from "../../data/models/serviceRequest.model";
 import { cloudinary } from "../../../../database";
-
-/**
- * Handler for creating a new service request
- */
+import { TokenPayload } from "@fcai-sis/shared-middlewares";
+import { StudentModel } from "@fcai-sis/shared-models";
 
 type HandlerRequest = Request<
   {},
   {},
   {
     serviceName: string;
-    studentId: string;
     message: string;
+    user: TokenPayload;
   }
 >;
 
-const handler = async (req: HandlerRequest, res: Response) => {
-  const { serviceName, studentId, message } = req.body;
-  const imgAttachment = req.file;
+/**
+ * Creates a new service request
+ */
+const createServiceRequestHandler = async (
+  req: HandlerRequest,
+  res: Response
+) => {
+  console.log(JSON.stringify(req.body));
+
+  const { serviceName, message, user } = req.body;
+  const image = req.file;
 
   // Ensure an image attachment was provided
-  if (!imgAttachment) {
+  if (!image) {
     res.status(400).json({
       summary: "Bad Request",
       details: "No image attachment was provided in the request body",
@@ -31,30 +37,38 @@ const handler = async (req: HandlerRequest, res: Response) => {
     return;
   }
   // Upload the strategy to cloudinary
-  const uploadResult = await cloudinary.uploader.upload(imgAttachment.path, {
+  const uploadResult = await cloudinary.uploader.upload(image.path, {
     folder: "attachments",
     resource_type: "raw",
   });
 
-  const service = new ServiceRequestModel({
+  const student = await StudentModel.findOne({ userId: user.userId });
+
+  if (!student) {
+    res.status(404).json({
+      summary: "Not Found",
+      details: "Student not found",
+    });
+    return;
+  }
+
+  const serviceRequest = new ServiceRequestModel({
     serviceName,
-    status: "pending",
-    studentId,
-    imgAttachment: uploadResult.secure_url,
+    status: serviceRequestStatuses[0],
+    student: student._id,
+    image: uploadResult.secure_url,
     message,
     createdAt: new Date(),
   });
 
-  await service.save();
+  await serviceRequest.save();
 
   const response = {
     message: "Service request created successfully",
-    service,
+    service: serviceRequest,
   };
 
   return res.status(201).json(response);
 };
-
-const createServiceRequestHandler = handler;
 
 export default createServiceRequestHandler;

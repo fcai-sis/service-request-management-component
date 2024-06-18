@@ -1,6 +1,6 @@
 import * as validator from "express-validator";
 import { NextFunction, Request, Response } from "express";
-import { ServiceStatusType } from "../../data/models/serviceRequest.model";
+import { serviceRequestStatuses } from "../../data/models/serviceRequest.model";
 import logger from "../../../../core/logger";
 
 /**
@@ -22,7 +22,7 @@ const validateUpdateServiceRequestMiddleware = [
   validator
     .body("status")
     .optional()
-    .isIn(["pending", "in progress", "completed", "rejected"] as ServiceStatusType[])
+    .isIn(serviceRequestStatuses)
     .withMessage("Invalid service status"),
 
   validator

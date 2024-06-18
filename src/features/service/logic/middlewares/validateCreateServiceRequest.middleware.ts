@@ -1,7 +1,6 @@
 import * as validator from "express-validator";
 import { NextFunction, Request, Response } from "express";
 import logger from "../../../../core/logger";
-import { StudentModel } from "@fcai-sis/shared-models";
 
 /**
  * Validates the request body of the Create Service Request endpoint.
@@ -13,22 +12,6 @@ const validateCreateServiceRequestMiddleware = [
     .withMessage("Service name is required")
     .isString()
     .withMessage("Service name must be a string"),
-
-  validator
-    .body("studentId")
-    .exists()
-    .withMessage("Student ID is required")
-    .isMongoId()
-    .withMessage("Invalid student ID")
-    .custom(async (value) => {
-      // Check if the student exists
-      const student = await StudentModel.findById(value);
-      if (!student) {
-        throw new Error("Student not found");
-      }
-
-      return true;
-    }),
 
   validator
     .body("message")
@@ -60,7 +43,6 @@ const validateCreateServiceRequestMiddleware = [
 
     // Attach the validated data to the request body
     req.body.serviceName = req.body.serviceName.trim();
-    req.body.studentId = req.body.studentId.trim();
     req.body.message = req.body.message?.trim();
 
     next();

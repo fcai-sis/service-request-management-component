@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import ServiceRequestModel, {
+  serviceRequestStatuses,
 } from "../../data/models/serviceRequest.model";
 
 /**
@@ -24,7 +25,7 @@ const handler = async (req: HandlerRequest, res: Response) => {
   const serviceRequest = await ServiceRequestModel.findByIdAndUpdate(
     serviceRequestId,
     {
-      status: "in progress",
+      status: serviceRequestStatuses[1],
       claimAt,
       message,
     },
@@ -47,7 +48,7 @@ const handler = async (req: HandlerRequest, res: Response) => {
     service: {
       serviceName: serviceRequest.serviceName,
       status: serviceRequest.status,
-      student: serviceRequest.studentId,
+      student: serviceRequest.student,
       message: serviceRequest.message,
       createdAt: serviceRequest.createdAt,
       claimAt: serviceRequest.claimAt,
