@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import ServiceRequestModel, {
+  ServiceRequestType,
   serviceRequestStatuses,
 } from "../../data/models/serviceRequest.model";
 import { cloudinary } from "../../../../database";
@@ -10,8 +11,7 @@ type HandlerRequest = Request<
   {},
   {},
   {
-    serviceName: string;
-    message: string;
+    request: ServiceRequestType;
     user: TokenPayload;
   }
 >;
@@ -23,9 +23,7 @@ const createServiceRequestHandler = async (
   req: HandlerRequest,
   res: Response
 ) => {
-  console.log(JSON.stringify(req.body));
-
-  const { serviceName, message, user } = req.body;
+  const { request, user } = req.body;
   const image = req.file;
 
   // Ensure an image attachment was provided
@@ -52,23 +50,21 @@ const createServiceRequestHandler = async (
     return;
   }
 
-  const serviceRequest = new ServiceRequestModel({
-    serviceName,
+  const createdServiceRequest = await ServiceRequestModel.create({
+    serviceName: request.serviceName,
     status: serviceRequestStatuses[0],
     student: student._id,
     image: uploadResult.secure_url,
-    message,
-    createdAt: new Date(),
   });
 
-  await serviceRequest.save();
-
-  const response = {
+  return res.status(201).json({
     message: "Service request created successfully",
-    service: serviceRequest,
-  };
-
-  return res.status(201).json(response);
+    serviceRequest: {
+      ...createdServiceRequest.toJSON(),
+      _id: undefined,
+      __v: undefined,
+    },
+  });
 };
 
 export default createServiceRequestHandler;

@@ -6,33 +6,26 @@ import ServiceRequestModel, {
 /**
  * Handler for accepting a service request
  */
-
 type HandlerRequest = Request<
   {
     serviceRequestId: string;
   },
   {},
   {
-    claimAt: Date;
-    message?: string;
+    serviceRequst: { claimAt: Date };
   }
 >;
 
-const handler = async (req: HandlerRequest, res: Response) => {
+const acceptServiceRequestHandler = async (
+  req: HandlerRequest,
+  res: Response
+) => {
   const { serviceRequestId } = req.params;
-  const { claimAt, message } = req.body;
+  const {
+    serviceRequst: { claimAt },
+  } = req.body;
 
-  const serviceRequest = await ServiceRequestModel.findByIdAndUpdate(
-    serviceRequestId,
-    {
-      status: serviceRequestStatuses[1],
-      claimAt,
-      message,
-    },
-    {
-      new: true,
-    }
-  );
+  const serviceRequest = await ServiceRequestModel.findById(serviceRequestId);
 
   if (!serviceRequest) {
     return res.status(404).json({
@@ -41,23 +34,20 @@ const handler = async (req: HandlerRequest, res: Response) => {
       },
     });
   }
+
+  serviceRequest.status = serviceRequestStatuses[1];
+  serviceRequest.claimAt = claimAt;
+
   await serviceRequest.save();
 
-  const response = {
+  return res.status(200).json({
     message: "Service request accepted successfully",
-    service: {
-      serviceName: serviceRequest.serviceName,
-      status: serviceRequest.status,
-      student: serviceRequest.student,
-      message: serviceRequest.message,
-      createdAt: serviceRequest.createdAt,
-      claimAt: serviceRequest.claimAt,
+    serviceRequest: {
+      ...serviceRequest.toJSON(),
+      _id: undefined,
+      __v: undefined,
     },
-  };
-
-  return res.status(200).json(response);
+  });
 };
-
-const acceptServiceRequestHandler = handler;
 
 export default acceptServiceRequestHandler;

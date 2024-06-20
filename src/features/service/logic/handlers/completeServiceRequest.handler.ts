@@ -3,13 +3,9 @@ import ServiceRequestModel, {
   serviceRequestStatuses,
 } from "../../data/models/serviceRequest.model";
 
-type HandlerRequest = Request<
-  {
-    serviceRequestId: string;
-  },
-  {},
-  {}
->;
+type HandlerRequest = Request<{
+  serviceRequestId: string;
+}>;
 
 /**
  * Completes a service request
@@ -20,15 +16,7 @@ const completeServiceRequestHandler = async (
 ) => {
   const { serviceRequestId } = req.params;
 
-  const serviceRequest = await ServiceRequestModel.findByIdAndUpdate(
-    serviceRequestId,
-    {
-      status: serviceRequestStatuses[2],
-    },
-    {
-      new: true,
-    }
-  );
+  const serviceRequest = await ServiceRequestModel.findById(serviceRequestId);
 
   if (!serviceRequest) {
     return res.status(404).json({
@@ -37,21 +25,19 @@ const completeServiceRequestHandler = async (
       },
     });
   }
+
+  serviceRequest.status = serviceRequestStatuses[2];
+
   await serviceRequest.save();
 
-  const response = {
+  return res.status(200).json({
     message: "Service request has been completed",
-    service: {
-      serviceName: serviceRequest.serviceName,
-      status: serviceRequest.status,
-      student: serviceRequest.student,
-      message: serviceRequest.message,
-      createdAt: serviceRequest.createdAt,
-      claimAt: serviceRequest.claimAt,
+    serviceRequest: {
+      ...serviceRequest.toJSON(),
+      _id: undefined,
+      __v: undefined,
     },
-  };
-
-  return res.status(200).json(response);
+  });
 };
 
 export default completeServiceRequestHandler;

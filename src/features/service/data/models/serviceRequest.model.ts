@@ -1,5 +1,7 @@
-import { studentModelName } from "@fcai-sis/shared-models";
-import mongoose, { Document, Schema } from "mongoose";
+import { foreignKey, studentModelName } from "@fcai-sis/shared-models";
+import mongoose, { mongo } from "mongoose";
+
+const serviceRequestModelName = "ServiceRequest";
 
 export const serviceRequestStatuses = [
   "PENDING",
@@ -7,20 +9,21 @@ export const serviceRequestStatuses = [
   "COMPLETED",
   "REJECTED",
 ] as const;
-
 export type ServiceRequestStatusType = (typeof serviceRequestStatuses)[number];
 
-interface IServiceRequest extends Document {
+export interface IServiceRequest extends mongoose.Document {
   serviceName: string;
   status: ServiceRequestStatusType;
-  student: Schema.Types.ObjectId;
+  student: mongoose.Schema.Types.ObjectId;
   message: string;
   createdAt: Date;
   claimAt: Date;
   image: string;
 }
 
-const ServiceRequestSchema = new mongoose.Schema<IServiceRequest>({
+export type ServiceRequestType = Omit<IServiceRequest, keyof mongoose.Document>;
+
+const serviceRequestSchema = new mongoose.Schema<IServiceRequest>({
   serviceName: {
     type: String,
     required: true,
@@ -31,11 +34,7 @@ const ServiceRequestSchema = new mongoose.Schema<IServiceRequest>({
     required: true,
     default: "PENDING",
   },
-  student: {
-    type: Schema.Types.ObjectId,
-    ref: studentModelName,
-    required: true,
-  },
+  student: foreignKey(studentModelName),
   message: {
     type: String,
     default: null,
@@ -55,11 +54,9 @@ const ServiceRequestSchema = new mongoose.Schema<IServiceRequest>({
   },
 });
 
-const serviceRequestModelName = "ServiceRequest";
-
 const ServiceRequestModel = mongoose.model<IServiceRequest>(
   serviceRequestModelName,
-  ServiceRequestSchema
+  serviceRequestSchema
 );
 
 export default ServiceRequestModel;

@@ -62,7 +62,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Mount API routes
-app.use("/service", serviceRequestRouter());
+app.use("/", serviceRequestRouter());
 
 // TODO: Custom 404 handler
 app.use((req: Request, res: Response, next: NextFunction) => {

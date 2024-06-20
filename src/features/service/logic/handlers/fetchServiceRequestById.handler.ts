@@ -1,22 +1,20 @@
 import { Request, Response } from "express";
 import ServiceRequestModel from "../../data/models/serviceRequest.model";
 
-type HandlerRequest = Request<{
-  serviceRequestId: string;
-}>;
-
 /**
- * Handler for deleting a service request
+ * Get a service request by ID
  */
-const deleteServiceRequestHandler = async (
+type HandlerRequest = Request<{ serviceRequestId: string }>;
+
+const fetchServiceRequestByIdHandler = async (
   req: HandlerRequest,
   res: Response
 ) => {
   const { serviceRequestId } = req.params;
 
-  const serviceRequest = await ServiceRequestModel.findByIdAndDelete(
+  const serviceRequest = await ServiceRequestModel.findById(
     serviceRequestId
-  );
+  ).populate({ path: "student", select: "fullName studentId -_id" });
 
   if (!serviceRequest) {
     return res.status(404).json({
@@ -27,7 +25,6 @@ const deleteServiceRequestHandler = async (
   }
 
   return res.status(200).json({
-    message: "Service request deleted successfully",
     serviceRequest: {
       ...serviceRequest.toJSON(),
       _id: undefined,
@@ -36,4 +33,4 @@ const deleteServiceRequestHandler = async (
   });
 };
 
-export default deleteServiceRequestHandler;
+export default fetchServiceRequestByIdHandler;

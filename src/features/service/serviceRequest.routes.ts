@@ -1,26 +1,21 @@
-import { Request, Router } from "express";
+import { Router } from "express";
 
-import { asyncHandler } from "@fcai-sis/shared-utilities";
-import createServiceHandler from "./logic/handlers/createServiceRequest.handler";
-import readServiceHandler from "./logic/handlers/readServiceRequests.handler";
-import readServiceByIdHandler from "./logic/handlers/getServiceRequestById.handler";
-import validateCreateServiceRequestMiddleware from "./logic/middlewares/validateCreateServiceRequest.middleware";
-import {
-  Role,
-  checkRole,
-  paginationQueryParamsMiddleware,
-} from "@fcai-sis/shared-middlewares";
-import ensureServiceRequestIdInParamsMiddleware from "./logic/middlewares/ensureRequestIdInParams.middleware";
 import { upload } from "../../app";
+import { asyncHandler } from "@fcai-sis/shared-utilities";
+import { Role, checkRole } from "@fcai-sis/shared-middlewares";
+import createServiceHandler from "./logic/handlers/createServiceRequest.handler";
+import readServiceByIdHandler from "./logic/handlers/fetchServiceRequestById.handler";
+import readServiceHandler from "./logic/handlers/fetchPaginatedServiceRequests.handler";
 import acceptServiceRequestHandler from "./logic/handlers/acceptServiceRequest.handler";
-import validateAcceptServiceRequestMiddleware from "./logic/middlewares/acceptServiceRequest.middleware";
-import validateRejectServiceRequestMiddleware from "./logic/middlewares/rejectServiceRequest.middleware";
 import rejectServiceRequestHandler from "./logic/handlers/rejectServiceRequest.handler";
-import validateUpdateServiceRequestMiddleware from "./logic/middlewares/validateUpdateServiceRequest.middleware";
-import updateServiceRequestHandler from "./logic/handlers/updateServiceRequest.handler";
 import deleteServiceRequestHandler from "./logic/handlers/deleteServiceRequest.handler";
 import completeServiceRequestHandler from "./logic/handlers/completeServiceRequest.handler";
-import readMyServiceRequestsHandler from "./logic/handlers/readMyServiceRequests.handler";
+import fetchMyServiceRequestsHandler from "./logic/handlers/fetchMyServiceRequests.handler";
+import filterationQueryParamsMiddleware from "./logic/middlewares/filterationQueryParams.middleware";
+import validateAcceptServiceRequestMiddleware from "./logic/middlewares/acceptServiceRequest.middleware";
+import validateRejectServiceRequestMiddleware from "./logic/middlewares/rejectServiceRequest.middleware";
+import ensureServiceRequestIdInParamsMiddleware from "./logic/middlewares/ensureRequestIdInParams.middleware";
+import validateCreateServiceRequestMiddleware from "./logic/middlewares/validateCreateServiceRequest.middleware";
 
 const serviceRequestRoutes = (router: Router) => {
   router.post(
@@ -34,16 +29,11 @@ const serviceRequestRoutes = (router: Router) => {
   router.get(
     "/",
     checkRole([Role.EMPLOYEE, Role.ADMIN]),
-    paginationQueryParamsMiddleware,
-    asyncHandler(readServiceHandler)
+    filterationQueryParamsMiddleware,
+    readServiceHandler
   );
 
-  router.get(
-    "/mine",
-    checkRole([Role.STUDENT]),
-    paginationQueryParamsMiddleware,
-    asyncHandler(readMyServiceRequestsHandler)
-  );
+  router.get("/mine", checkRole([Role.STUDENT]), fetchMyServiceRequestsHandler);
 
   router.get(
     "/:serviceRequestId",
@@ -75,13 +65,6 @@ const serviceRequestRoutes = (router: Router) => {
     asyncHandler(completeServiceRequestHandler)
   );
 
-  router.patch(
-    "/update/:serviceRequestId",
-    checkRole([Role.EMPLOYEE, Role.ADMIN]),
-    ensureServiceRequestIdInParamsMiddleware,
-    validateUpdateServiceRequestMiddleware,
-    asyncHandler(updateServiceRequestHandler)
-  );
   router.delete(
     "/delete/:serviceRequestId",
     checkRole([Role.EMPLOYEE, Role.ADMIN]),

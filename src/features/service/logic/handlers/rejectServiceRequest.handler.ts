@@ -6,31 +6,26 @@ import ServiceRequestModel, {
 /**
  * Handler for rejecting a service request
  */
-
 type HandlerRequest = Request<
   {
     serviceRequestId: string;
   },
   {},
   {
-    message: string;
+    serviceRequst: { message: string };
   }
 >;
 
-const handler = async (req: HandlerRequest, res: Response) => {
+const rejectServiceRequestHandler = async (
+  req: HandlerRequest,
+  res: Response
+) => {
   const { serviceRequestId } = req.params;
-  const { message } = req.body;
+  const {
+    serviceRequst: { message },
+  } = req.body;
 
-  const serviceRequest = await ServiceRequestModel.findByIdAndUpdate(
-    serviceRequestId,
-    {
-      status: serviceRequestStatuses[3],
-      message,
-    },
-    {
-      new: true,
-    }
-  );
+  const serviceRequest = await ServiceRequestModel.findById(serviceRequestId);
 
   if (!serviceRequest) {
     return res.status(404).json({
@@ -39,23 +34,22 @@ const handler = async (req: HandlerRequest, res: Response) => {
       },
     });
   }
+
+  serviceRequest.status = serviceRequestStatuses[3];
+  serviceRequest.message = message;
+
   await serviceRequest.save();
 
   const response = {
     message: "Service request has been rejected",
-    service: {
-      serviceName: serviceRequest.serviceName,
-      status: serviceRequest.status,
-      student: serviceRequest.student,
-      message: serviceRequest.message,
-      createdAt: serviceRequest.createdAt,
-      claimAt: serviceRequest.claimAt,
+    serviceRequest: {
+      ...serviceRequest.toJSON(),
+      _id: undefined,
+      __v: undefined,
     },
   };
 
   return res.status(200).json(response);
 };
-
-const rejectServiceRequestHandler = handler;
 
 export default rejectServiceRequestHandler;
