@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import ServiceRequestModel, {
-  ServiceRequestType,
   serviceRequestStatuses,
 } from "../../data/models/serviceRequest.model";
 import { cloudinary } from "../../../../database";
@@ -11,7 +10,7 @@ type HandlerRequest = Request<
   {},
   {},
   {
-    request: ServiceRequestType;
+    serviceName: string;
     user: TokenPayload;
   }
 >;
@@ -23,7 +22,7 @@ const createServiceRequestHandler = async (
   req: HandlerRequest,
   res: Response
 ) => {
-  const { request, user } = req.body;
+  const { serviceName, user } = req.body;
   const image = req.file;
 
   // Ensure an image attachment was provided
@@ -40,18 +39,17 @@ const createServiceRequestHandler = async (
     resource_type: "raw",
   });
 
-  const student = await StudentModel.findOne({ userId: user.userId });
+  const student = await StudentModel.findOne({ user: user.userId });
 
   if (!student) {
     res.status(404).json({
-      summary: "Not Found",
-      details: "Student not found",
+      error: "Student not found",
     });
     return;
   }
 
   const createdServiceRequest = await ServiceRequestModel.create({
-    serviceName: request.serviceName,
+    serviceName,
     status: serviceRequestStatuses[0],
     student: student._id,
     image: uploadResult.secure_url,

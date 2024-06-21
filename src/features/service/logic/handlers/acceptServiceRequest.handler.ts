@@ -12,7 +12,7 @@ type HandlerRequest = Request<
   },
   {},
   {
-    serviceRequst: { claimAt: Date };
+    claimAt: Date;
   }
 >;
 
@@ -21,9 +21,7 @@ const acceptServiceRequestHandler = async (
   res: Response
 ) => {
   const { serviceRequestId } = req.params;
-  const {
-    serviceRequst: { claimAt },
-  } = req.body;
+  const { claimAt } = req.body;
 
   const serviceRequest = await ServiceRequestModel.findById(serviceRequestId);
 

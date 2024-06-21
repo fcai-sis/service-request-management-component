@@ -12,7 +12,7 @@ type HandlerRequest = Request<
   },
   {},
   {
-    serviceRequst: { message: string };
+    message: string;
   }
 >;
 
@@ -21,9 +21,7 @@ const rejectServiceRequestHandler = async (
   res: Response
 ) => {
   const { serviceRequestId } = req.params;
-  const {
-    serviceRequst: { message },
-  } = req.body;
+  const { message } = req.body;
 
   const serviceRequest = await ServiceRequestModel.findById(serviceRequestId);
 
