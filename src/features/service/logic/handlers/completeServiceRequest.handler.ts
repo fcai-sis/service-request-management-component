@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import ServiceRequestModel, {
-  serviceRequestStatuses,
-} from "../../data/models/serviceRequest.model";
+import {
+  ServiceRequestModel,
+  ServiceRequestStatusEnum,
+} from "@fcai-sis/shared-models";
 
 type HandlerRequest = Request<{
   serviceRequestId: string;
@@ -26,7 +27,7 @@ const completeServiceRequestHandler = async (
     });
   }
 
-  serviceRequest.status = serviceRequestStatuses[2];
+  serviceRequest.status = ServiceRequestStatusEnum[2];
 
   await serviceRequest.save();
 

@@ -1,6 +1,6 @@
 import paginate from "express-paginate";
 import { Request, Response } from "express";
-import ServiceRequestModel from "../../data/models/serviceRequest.model";
+import { ServiceRequestModel } from "@fcai-sis/shared-models";
 import { asyncHandler } from "@fcai-sis/shared-utilities";
 
 type HandlerRequest = Request;

@@ -1,5 +1,5 @@
 import * as validator from "express-validator";
-import { serviceRequestStatuses } from "../../data/models/serviceRequest.model";
+import { ServiceRequestStatusEnum } from "@fcai-sis/shared-models";
 import { validateRequestMiddleware } from "@fcai-sis/shared-middlewares";
 
 const filterationQueryParamsMiddleware = [
@@ -11,7 +11,7 @@ const filterationQueryParamsMiddleware = [
     .isString()
     .withMessage("Status must be a string")
 
-    .isIn(serviceRequestStatuses)
+    .isIn(ServiceRequestStatusEnum)
     .withMessage("Invalid status"),
 
   validateRequestMiddleware,

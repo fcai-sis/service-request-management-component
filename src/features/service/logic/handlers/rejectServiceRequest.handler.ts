@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import ServiceRequestModel, {
-  serviceRequestStatuses,
-} from "../../data/models/serviceRequest.model";
+import {
+  ServiceRequestModel,
+  ServiceRequestStatusEnum,
+} from "@fcai-sis/shared-models";
 
 /**
  * Handler for rejecting a service request
@@ -33,7 +34,7 @@ const rejectServiceRequestHandler = async (
     });
   }
 
-  serviceRequest.status = serviceRequestStatuses[3];
+  serviceRequest.status = ServiceRequestStatusEnum[3];
   serviceRequest.message = message;
 
   await serviceRequest.save();

@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import ServiceRequestModel, {
-  serviceRequestStatuses,
-} from "../../data/models/serviceRequest.model";
+import {
+  ServiceRequestModel,
+  ServiceRequestStatusEnum,
+} from "@fcai-sis/shared-models";
 
 /**
  * Handler for accepting a service request
@@ -33,7 +34,7 @@ const acceptServiceRequestHandler = async (
     });
   }
 
-  serviceRequest.status = serviceRequestStatuses[1];
+  serviceRequest.status = ServiceRequestStatusEnum[1];
   serviceRequest.claimAt = claimAt;
 
   await serviceRequest.save();

@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { StudentModel } from "@fcai-sis/shared-models";
 import { asyncHandler } from "@fcai-sis/shared-utilities";
 import { TokenPayload } from "@fcai-sis/shared-middlewares";
-import ServiceRequestModel from "../../data/models/serviceRequest.model";
+import { ServiceRequestModel } from "@fcai-sis/shared-models";
 
 type HandlerRequest = Request<{}, {}, { user: TokenPayload }>;
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import ServiceRequestModel from "../../data/models/serviceRequest.model";
+import { ServiceRequestModel } from "@fcai-sis/shared-models";
 
 /**
  * Get a service request by ID

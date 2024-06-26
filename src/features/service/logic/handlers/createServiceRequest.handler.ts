@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import ServiceRequestModel, {
-  serviceRequestStatuses,
-} from "../../data/models/serviceRequest.model";
+import {
+  ServiceRequestModel,
+  ServiceRequestStatusEnum,
+} from "@fcai-sis/shared-models";
 import { cloudinary } from "../../../../database";
 import { TokenPayload } from "@fcai-sis/shared-middlewares";
 import { StudentModel } from "@fcai-sis/shared-models";
@@ -43,14 +44,16 @@ const createServiceRequestHandler = async (
 
   if (!student) {
     res.status(404).json({
-      error: "Student not found",
+      error: {
+        message: "Student not found",
+      },
     });
     return;
   }
 
   const createdServiceRequest = await ServiceRequestModel.create({
     serviceName,
-    status: serviceRequestStatuses[0],
+    status: ServiceRequestStatusEnum[0],
     student: student._id,
     image: uploadResult.secure_url,
   });
