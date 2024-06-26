@@ -33,7 +33,12 @@ const serviceRequestRoutes = (router: Router) => {
     readServiceHandler
   );
 
-  router.get("/mine", checkRole([Role.STUDENT]), fetchMyServiceRequestsHandler);
+  router.get(
+    "/mine",
+    checkRole([Role.STUDENT]),
+    filterationQueryParamsMiddleware,
+    fetchMyServiceRequestsHandler
+  );
 
   router.get(
     "/:serviceRequestId",

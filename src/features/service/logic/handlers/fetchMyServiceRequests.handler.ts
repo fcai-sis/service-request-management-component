@@ -14,6 +14,7 @@ const fetchMyServiceRequestsHandler = [
   paginate.middleware(),
   asyncHandler(async (req: HandlerRequest, res: Response) => {
     const { user } = req.body;
+    const status = req.query.status;
 
     const student = await StudentModel.findOne({ user: user.userId });
 
@@ -25,9 +26,12 @@ const fetchMyServiceRequestsHandler = [
       });
     }
 
-    const serviceRequests = await ServiceRequestModel.find({
+    const filter = {
       student: student._id,
-    })
+      ...(status && { status }),
+    };
+
+    const serviceRequests = await ServiceRequestModel.find(filter)
       .populate({
         path: "student",
         select: "fullName studentId -_id",
