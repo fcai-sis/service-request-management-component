@@ -6,7 +6,7 @@ const filterationQueryParamsMiddleware = [
   validator
     .query("status")
 
-    .optional()
+    .optional({ values: "falsy" })
 
     .isString()
     .withMessage("Status must be a string")
