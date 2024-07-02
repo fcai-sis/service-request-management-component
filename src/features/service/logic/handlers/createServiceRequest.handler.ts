@@ -29,8 +29,12 @@ const createServiceRequestHandler = async (
   // Ensure an image attachment was provided
   if (!image) {
     res.status(400).json({
-      summary: "Bad Request",
-      details: "No image attachment was provided in the request body",
+      errors: [
+        {
+          summary: "Bad Request",
+          message: "No image attachment was provided in the request body",
+        },
+      ],
     });
     return;
   }
@@ -44,9 +48,11 @@ const createServiceRequestHandler = async (
 
   if (!student) {
     res.status(404).json({
-      error: {
-        message: "Student not found",
-      },
+      errors: [
+        {
+          message: "Student not found",
+        },
+      ],
     });
     return;
   }

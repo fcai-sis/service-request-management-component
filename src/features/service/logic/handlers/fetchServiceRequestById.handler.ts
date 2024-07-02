@@ -18,9 +18,11 @@ const fetchServiceRequestByIdHandler = async (
 
   if (!serviceRequest) {
     return res.status(404).json({
-      error: {
-        message: "Service request not found",
-      },
+      errors: [
+        {
+          message: "Service request not found",
+        },
+      ],
     });
   }
 
