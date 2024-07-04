@@ -3,7 +3,7 @@ import {
   ServiceRequestModel,
   ServiceRequestStatusEnum,
 } from "@fcai-sis/shared-models";
-
+import env from "../../../../env";
 /**
  * Handler for rejecting a service request
  */
@@ -40,6 +40,17 @@ const rejectServiceRequestHandler = async (
   serviceRequest.message = message;
 
   await serviceRequest.save();
+
+  await fetch(`${env.MAIL_API_URL}/email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      subject: "Service request rejected",
+      text: `Your service request has been rejected with the following message: ${message}`,
+    }),
+  });
 
   const response = {
     message: "Service request has been rejected",
