@@ -14,7 +14,13 @@ const fetchServiceRequestsHandler = [
     const status = req.query.status;
     const filter = { ...(status && { status }) };
 
-    const serviceRequests = await ServiceRequestModel.find(filter)
+    const serviceRequests = await ServiceRequestModel.find(
+      filter,
+      {},
+      {
+        sort: { createdAt: -1 },
+      }
+    )
       .populate({
         path: "student",
         select: "fullName studentId -_id",
