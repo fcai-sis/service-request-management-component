@@ -25,7 +25,7 @@ const fetchServiceRequestsHandler = [
         path: "student",
         select: "fullName studentId -_id",
       })
-      .skip(Number(req.query.skip) ?? 0)
+      .skip(req.skip ?? 0)
       .limit(req.query.limit as unknown as number);
 
     // Count the total number of service requests
