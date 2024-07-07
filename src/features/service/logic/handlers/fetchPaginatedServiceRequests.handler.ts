@@ -29,13 +29,11 @@ const fetchServiceRequestsHandler = [
       .limit(req.query.limit as unknown as number);
 
     // Count the total number of service requests
-    const totalServiceRequests = await ServiceRequestModel.countDocuments(
-      filter
-    );
+    const total = await ServiceRequestModel.countDocuments(filter);
 
     return res.status(200).json({
       serviceRequests: serviceRequests,
-      totalServiceRequests: totalServiceRequests,
+      total,
       page: req.query.page,
       limit: req.query.limit,
     });
